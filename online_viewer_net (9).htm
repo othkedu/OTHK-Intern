@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTHK BD INTERNSHIP 2026 - THE MULTIVERSE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --othk-orange: #FF6B00;
+            --othk-navy: #0A192F;
+            --othk-cyan: #00F2FF;
+            --othk-purple: #8A2BE2;
+            --othk-pink: #FF00FF;
+            --bg-dark: #020617;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: white; overflow-x: hidden; scroll-behavior: smooth; }
+        h1, h2, h3, .cyber-btn { font-family: 'Exo 2', sans-serif; }
+
+        /* --- BACKGROUND ĐA VŨ TRỤ --- */
+        #universe-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 50%, #0a0f24 0%, #020617 100%); z-index: -1; overflow: hidden; }
+        #stars-container, #antigravity-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .star { position: absolute; border-radius: 50%; animation: twinkle var(--duration) infinite alternate ease-in-out; }
+        @keyframes twinkle { 0% { opacity: 0.1; transform: scale(0.5); box-shadow: 0 0 2px currentColor; } 100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px currentColor; } }
+        .ag-particle { position: absolute; border-radius: 50%; filter: blur(1px); pointer-events: none; will-change: transform; }
+
+        /* --- UI UTILS --- */
+        .content-wrapper { position: relative; z-index: 10; }
+        .cyber-btn { padding: 15px 35px; border-radius: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.4s; border: none; position: relative; overflow: hidden; text-decoration: none; text-align: center; }
+        .btn-orange { background: linear-gradient(45deg, var(--othk-orange), #FFB347); color: white; box-shadow: 0 0 20px rgba(255, 107, 0, 0.4); }
+        .btn-cyan { background: linear-gradient(45deg, #00B4D8, var(--othk-cyan)); color: var(--othk-navy); box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); }
+        .btn-report { background: linear-gradient(45deg, #e11d48, #be123c); color: white; box-shadow: 0 0 30px rgba(225, 29, 72, 0.5); border: 2px solid #fb7185; display: inline-block; padding: 20px 45px; font-size: 1.2rem; animation: reportPulse 2s infinite; }
+        .cyber-btn:hover { transform: translateY(-5px) scale(1.05); }
+
+        #back-btn { position: fixed; top: 20px; left: 20px; z-index: 9999; display: none; background: rgba(10, 25, 47, 0.8); border: 1px solid var(--othk-cyan); color: var(--othk-cyan); padding: 10px 20px; border-radius: 8px; backdrop-filter: blur(10px); font-size: 0.9rem; }
+        #back-btn:hover { background: var(--othk-cyan); color: var(--othk-navy); }
+
+        /* --- HERO --- */
+        #hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; transition: opacity 0.8s ease; padding: 0 20px; }
+        .rocket-container { font-size: 80px; margin-bottom: 30px; transition: 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); position: relative; }
+        .rocket-fire { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); width: 20px; height: 40px; background: orange; filter: blur(10px); opacity: 0; }
+        .launching { transform: translateY(-120vh) scale(0.5) !important; filter: blur(5px); }
+        .shaking { animation: shake 0.1s infinite; }
+        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(2px, -2px); } }
+
+        /* --- SECTIONS & CARDS --- */
+        .section { display: none; padding: 100px 20px 60px 20px; max-width: 1200px; margin: 0 auto; opacity: 0; transform: translateY(150px) scale(0.95); transition: all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .section.active { display: block; opacity: 1; transform: translateY(0) scale(1); }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
+        .cyber-card { background: rgba(10, 20, 40, 0.6); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); transition: 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .cyber-card:hover { border-color: var(--othk-cyan); background: rgba(0, 242, 255, 0.08); transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0, 242, 255, 0.2); }
+
+        /* --- POPUPS --- */
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px;}
+        .popup-content { background: #0d1117; padding: 40px; border-radius: 20px; max-width: 750px; width: 100%; border: 2px solid var(--othk-orange); box-shadow: 0 0 50px rgba(255, 107, 0, 0.3); max-height: 90vh; overflow-y: auto; position: relative; }
+        .popup-content h2, .popup-content h3 { font-family: 'Exo 2', sans-serif; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #fff; z-index: 100; font-family: Arial, sans-serif; font-weight: bold;}
+        .close-btn:hover { color: var(--othk-orange); }
+
+        .gradient-text { background: linear-gradient(90deg, #FF6B00, #00F2FF, #FF00FF); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; }
+        @keyframes shine { to { background-position: 200% center; } }
+        .protocol-warn { border: 2px solid red; padding: 20px; border-radius: 15px; background: rgba(255,0,0,0.1); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.4); } 70% { box-shadow: 0 0 0 15px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
+        @keyframes reportPulse { 0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(225, 29, 72, 0); } 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); } }
+        @keyframes bgRotate { 100% { transform: rotate(360deg); } }
+
+        .full-height-center { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+        .sample-link { display: block; text-decoration: none; color: inherit; }
+        
+        .hl-orange { color: var(--othk-orange); font-weight: bold; }
+        .hl-cyan { color: var(--othk-cyan); font-weight: bold; }
+        .hl-pink { color: var(--othk-pink); font-weight: bold; }
+        .hl-green { color: #00ffaa; font-weight: bold; }
+
+        /* ================= TỐI ƯU CHO GIAO DIỆN MOBILE ================= */
+        @media (max-width: 768px) {
+            #hero h1 { font-size: 2.2rem !important; }
+            #hero p { font-size: 0.9rem; margin-bottom: 20px; }
+            .rocket-container { font-size: 60px !important; margin-bottom: 15px; }
+            #hero > div { flex-direction: column; width: 100%; max-width: 300px; gap: 10px; }
+            .cyber-btn { padding: 12px 20px; font-size: 0.9rem; width: 100%; margin: 0 !important; }
+            .card-grid { grid-template-columns: 1fr; gap: 15px; margin-top: 25px; }
+            .cyber-card { padding: 20px; }
+            .section { padding: 80px 15px 40px 15px; }
+            .popup-overlay { padding: 15px; }
+            .popup-content { padding: 30px 15px 20px 15px; max-height: 85vh; border-width: 1px;}
+            .close-btn { top: 5px; right: 15px; font-size: 28px; }
+            .popup-content h2 { font-size: 1.5rem !important; }
+            #back-btn { top: 15px; left: 15px; padding: 8px 15px; font-size: 0.8rem; }
+            #marketing-step1 .cyber-btn { flex-basis: 100%; }
+            .popup-content p, .popup-content li { font-size: 0.95rem !important; }
+            .kpi-board { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="universe-bg"><div id="stars-container"></div><div id="antigravity-container"></div></div>
+
+<div class="content-wrapper">
+    <button id="back-btn" class="cyber-btn" onclick="returnToHero()">🔙 QUAY LẠI TRẠM CHÍNH</button>
+
+    <div id="hero">
+        <div class="rocket-container" id="main-rocket">🚀<div class="rocket-fire" id="fire"></div></div>
+        <h1 style="font-size: 3.5rem; margin-bottom: 10px;">OTHK BD <span class="gradient-text">MULTIVERSE 2026</span></h1>
+        <p style="color: #94a3b8; margin-bottom: 40px; font-family: 'Exo 2', sans-serif;">CHOOSE YOUR DESTINY. PREPARE FOR LAUNCH.</p>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+            <button class="cyber-btn btn-cyan" onclick="launch('consultant')">BD Intern Consultant</button>
+            <button class="cyber-btn btn-orange" onclick="launch('marketing')">BD Intern Marketing</button>
+        </div>
+    </div>
+
+    <div id="consultant-root">
+        <section class="section" id="consultant-s2">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <a href="https://forms.gle/Hj4E1wU9wdTzKviK9" target="_blank" class="cyber-btn btn-report">🎯 BÁO CÁO CÔNG VIỆC</a>
+                <p style="color: #cbd5e1; margin-top: 10px; font-style: italic; font-size: 0.9rem;">* Nạp dữ liệu Data vào Form để tính KPI!</p>
+            </div>
+
+            <h2 class="gradient-text">MOD-01: OTHK GENESIS</h2>
+            <div class="cyber-card" style="margin-top: 30px; border-left: 5px solid var(--othk-orange);">
+                <h3 style="color: var(--othk-orange); margin-bottom: 15px;">🚀 VỊ THẾ NỀN TẢNG - BRAND IDENTITY</h3>
+                <p style="line-height: 1.8; color: #cbd5e1; font-size: 1.1rem;"><b>OTHK Education</b> là Nền tảng Luyện thi Đánh giá Năng lực Đại học quốc gia <b>HSA & V-ACT</b> hàng đầu tại Việt Nam, sở hữu hơn <b>10 năm kinh nghiệm</b> dày dặn trong lĩnh vực Giáo dục và đào tạo. Hiện tại, OTHK vẫn đang tiếp tục trên con đường lan tỏa tri thức và hỗ trợ hàng nghìn học viên đỗ đạt nguyện vọng.</p>
+            </div>
+
+            <div class="card-grid">
+                <div class="cyber-card" style="border-top: 3px solid var(--othk-cyan);">
+                    <h3 style="color: var(--othk-cyan)">💡 ĐỘT PHÁ CÔNG NGHỆ</h3>
+                    <p style="margin-top: 10px; line-height: 1.6; color: #cbd5e1;">Được <b>VTV</b> và báo <b>Tiền Phong</b> công nhận là đơn vị tiên phong áp dụng <b>Hybrid Learning</b>.</p>
+                    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                        <a href="https://vtv.vn/othk-education-tien-phong-thiet-lap-he-sinh-thai-giao-duc-40-cho-tuong-lai-nguoi-hoc-viet-nam-100260312102115359.htm" target="_blank" class="cyber-btn btn-cyan" style="padding: 10px; font-size: 0.8rem;">📺 XEM BÁO VTV</a>
+                        <a href="https://tienphong.vn/othk-education-thiet-lap-chuan-dao-tao-100-hsa-900-v-act-cung-doi-ngu-top-1-diem-thi-danh-gia-nang-luc-post1819596.tpo" target="_blank" class="cyber-btn btn-cyan" style="padding: 10px; font-size: 0.8rem; background: #fff; color: #000;">🗞️ XEM BÁO TIỀN PHONG</a>
+                    </div>
+                </div>
+
+                <div class="cyber-card" style="border-top: 3px solid var(--othk-pink);">
+                    <h3 style="color: var(--othk-pink)">📜 BẢO CHỨNG ĐẦU RA</h3>
+                    <p style="margin-top: 10px; line-height: 1.6; color: #cbd5e1;">Cam kết điểm đầu ra bằng văn bản cho học viên:</p>
+                    <ul style="margin-top: 10px; list-style: none; color: #fff; font-weight: bold;">
+                        <li style="font-size: 1.3rem; color: var(--othk-pink);">🎯 100+ ĐIỂM HSA</li>
+                        <li style="font-size: 1.3rem; color: var(--othk-cyan);">🎯 900+ ĐIỂM V-ACT</li>
+                    </ul>
+                    <a href="https://docs.google.com/document/d/1Gu_bQTLkNkBu_np1mk9ZDvMxMFKhCzX-jivYxx64xgs/edit?usp=sharing" target="_blank" class="cyber-btn" style="background: var(--othk-pink); color: white; display: inline-block; margin-top: 15px; padding: 10px 20px; font-size: 0.85rem;">📄 Xem Cam Kết Mẫu</a>
+                </div>
+            </div>
+
+            <div class="cyber-card" style="margin-top: 25px; border: 1px solid var(--othk-cyan); background: rgba(0, 242, 255, 0.05);">
+                 <h3 style="color: var(--othk-cyan); text-align: center; margin-bottom: 20px;">🚀 SỨ MỆNH CHIẾN DỊCH HSA QUEST</h3>
+                 <p style="margin-bottom: 10px; line-height: 1.8; color: #e2e8f0;"><b>Tầm nhìn Chiến dịch:</b> HSA Quest không chỉ là một kỳ thực tập, mà là chiến dịch <b>thực chiến</b> dành riêng cho BD Intern 2026. Mục tiêu cốt lõi là rèn luyện bản lĩnh Sales thực địa, nâng cao kỹ năng tư vấn (Closing), đồng thời lan tỏa thương hiệu OTHK.</p>
+                 <p style="margin-bottom: 10px; line-height: 1.8; color: #e2e8f0;"><b>Mặt trận Thực thi:</b> Trực tiếp tiếp cận học sinh THPT trên địa bàn HN & TP.HCM tại các quán ăn, quán cafe đối tác.</p>
+                 <p style="margin-bottom: 10px; line-height: 1.8; color: #e2e8f0;"><b>Mục tiêu Chiến lược:</b> Thiết lập phễu khách hàng tiềm năng vào nhóm Zalo/Messenger để chăm sóc và chuyển đổi thành Doanh số thực tế.</p>
+                 <p style="line-height: 1.8; color: #e2e8f0;"><b>Giá trị Cốt lõi:</b> Trao bộ tài liệu "Xuất phát sớm", tư vấn định hướng để các em 2k9, 2k10 chuẩn bị phương án thi Đại học an toàn.</p>
+            </div>
+        </section>
+
+        <section class="section" id="consultant-s3">
+            <h2>MOD-02: ĐIỀU KIỆN & LỘ TRÌNH TÁC CHIẾN</h2>
+            <div class="card-grid">
+                <div class="cyber-card" style="grid-column: 1 / -1; border-left: 4px solid var(--othk-orange);">
+                    <h3 style="color: var(--othk-orange); margin-bottom: 15px;">🎯 ĐIỀU KIỆN GIA NHẬP & KPI TÁC CHIẾN</h3>
+                    <ul style="line-height: 1.8; color: #e2e8f0; list-style: none;">
+                        <li>- Không yêu cầu kinh nghiệm làm việc (Sẽ được training từ A-Z).</li>
+                        <li>- Sinh viên năm 1-2-3 tự tin, giao tiếp thân thiện.</li>
+                        <li>- <b>Bản lĩnh giao tiếp (Cold-approach - tiếp cận lạnh) với người lạ, tư duy tính toán nhanh nhạy và xử lý tình huống khéo léo.</b></li>
+                        <li>- Smartphone & laptop kết nối mạng ổn định.</li>
+                        <li style="margin-top: 10px; padding: 10px; background: rgba(255,107,0,0.1); border-radius: 8px;">
+                            <b style="color: var(--othk-orange); font-size: 1.1rem;">=> MỤC TIÊU: 200 Lead / Ngày / Quán.</b><br>
+                            <i style="font-size: 0.95rem;">(Mẹo thực chiến: Mỗi quán bạn chỉ cần tập trung mời 50 khách gốc nhận voucher/ngày. Nhờ quy tắc "1 khách mời 3 bạn", việc các học sinh gửi lời mời vào nhóm sẽ tự động sinh ra 150 Lead còn lại, giúp bạn dễ dàng đạt mốc 200 Lead!)</i>
+                        </li>
+                    </ul>
+                </div>
+                <div class="cyber-card" style="grid-column: 1 / -1; border-left: 4px solid var(--othk-cyan);">
+                    <h3 style="color: var(--othk-cyan); margin-bottom: 15px;">⚔️ TÓM TẮT 6 BƯỚC TÁC CHIẾN THỰC ĐỊA</h3>
+                    <ul style="line-height: 1.8; color: #e2e8f0; list-style: none;">
+                        <li>🔍 <b>1. Tìm kiếm các trường THPT tiềm năng và quán ăn đông học sinh của trường.</b></li>
+                        <li>🤝 <b>2. Gửi lời mời hợp tác và đàm phán với chủ quán.</b></li>
+                        <li>🎯 <b>3. Tiếp cận học sinh bằng đố vui.</b></li>
+                        <li>📲 <b>4. Hướng dẫn Follow FB/Zalo & Join nhóm.</b></li>
+                        <li>✅ <b>5. Xác thực nhiệm vụ & Trao Voucher giấy.</b></li>
+                        <li>📊 <b>6. Báo cáo số liệu & Chốt sổ tại chỗ.</b></li>
+                    </ul>
+                    <p style="margin-top: 15px; color: #94a3b8; font-style: italic;">* Kéo xuống MOD-03 để xem chi tiết cách thực thi từng bước.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="consultant-s4">
+            <h2 class="gradient-text">MOD-03: CẨM NANG THỰC CHIẾN (PLAYBOOK)</h2>
+            <div class="card-grid">
+                <div class="cyber-card" style="cursor: pointer" onclick="openPopup('c-step1')">
+                    <h3>🔍 BƯỚC 1: TÌM KIẾM MỤC TIÊU</h3>
+                    <p style="color: #94a3b8; margin-top:5px">Chiến lược chọn Trường & Quán ăn (Click xem).</p>
+                </div>
+                <div class="cyber-card" style="cursor: pointer" onclick="openPopup('c-step2')">
+                    <h3>🤝 BƯỚC 2: ĐÀM PHÁN HỢP TÁC</h3>
+                    <p style="color: #94a3b8; margin-top:5px">Kịch bản hợp tác Win-Win (Click xem).</p>
+                </div>
+                <div class="cyber-card" style="cursor: pointer" onclick="openPopup('c-step3')">
+                    <h3>🎯 BƯỚC 3: CÂU ĐỐ VUI</h3>
+                    <p style="color: #94a3b8; margin-top:5px">Bộ 5 câu hỏi đố vui & Đáp án chuẩn (Click xem).</p>
+                </div>
+                <div class="cyber-card" style="cursor: pointer" onclick="openPopup('c-step4')">
+                    <h3>📲 BƯỚC 4: ĐIỀU KIỆN NHẬN QUÀ</h3>
+                    <p style="color: #94a3b8; margin-top:5px">Link Zalo, Fanpage & Câu hỏi duyệt Group (Click xem).</p>
+                </div>
+                <div class="cyber-card" style="cursor: pointer" onclick="openPopup('c-step5')">
+                    <h3>✅ BƯỚC 5: XÁC THỰC VOUCHER</h3>
+                    <p style="color: #94a3b8; margin-top:5px">Quy trình trao Voucher Giấy an toàn 100% (Click xem).</p>
+                </div>
+                <div class="cyber-card" style="cursor: pointer; border-color: red;" onclick="openPopup('c-step6')">
+                    <h3 style="color: #fb7185">📊 BƯỚC 6: CHỐT SỔ TẠI CHỖ</h3>
+                    <p style="color: #94a3b8; margin-top:5px">Khai báo Form KPIs & Luật đền bù (Click xem).</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="consultant-s5">
+            <h2>MOD-04: TÀI CHÍNH & PROTOCOL</h2>
+            <div class="card-grid">
+                <div class="cyber-card" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--othk-cyan); margin-bottom: 15px;">💰 PHẦN THƯỞNG & ĐẶC QUYỀN</h3>
+                    <ul style="line-height: 1.8; color: #e2e8f0; list-style: none;">
+                        <li>- <b>Thưởng theo ngày:</b> 200.000đ / 200 data vào nhóm / ngày. </li>
+                        <li>- <b>Thưởng nóng KPI:</b> +50.000đ (Nếu đạt 300 lead/ngày).</li>
+                        <li>- <b>Hoa hồng doanh số:</b> 8% hoa hồng / khách chốt khóa học.</li>
+                        <li>- <b>Lương cứng hỗ trợ (Theo tháng):</b> Tối thiểu 250.000đ (Nếu đạt dưới 50% KPI doanh số), tối đa 1.000.000đ (Đạt trên 50% KPI Doanh số & làm đủ ca).</li>
+                        <li style="margin-top: 10px; color: var(--othk-cyan); font-weight: bold; font-size: 1.1rem;">=> Thu nhập kỳ vọng: 2 - 5 Triệu/Tháng.</li>
+                        <li style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">- Trải nghiệm thực chiến tư vấn, hiểu sâu sản phẩm & thương hiệu, tương tác trực tiếp Insight khách hàng trước khi vào Page trực.</li>
+                        <li>- Chứng nhận thực tập tại OTHK Group nếu đạt kết quả tốt.</li>
+                        <li>- Hỗ trợ xây dựng thương hiệu cá nhân theo chương trình đại sứ.</li>
+                        <li>- <b class="hl-orange">Học bổng miễn phí các khóa tại OTHK trị giá đến 3 triệu đồng</b> nếu lên chính thức.</li>
+                    </ul>
+                </div>
+                <div class="protocol-warn" style="grid-column: 1 / -1;">
+                    <h3>🚨 CẢNH BÁO: QUY TẮC ĐỔI QUÁN</h3>
+                    <p style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Nếu 2 ngày liên tục tại 1 quán ăn đạt dưới 50 Data => LẬP TỨC TÌM QUÁN KHÁC.</p>
+                    <p style="margin-top: 10px; font-size: 0.95rem; color: #ffcccc;"><b>Lưu ý quan trọng:</b> Chỉ "Data Gốc" mới được nhận Voucher. "Data được mời thêm" vẫn tính KPI cho BD nhưng không được nhận Voucher để đảm bảo luồng ngân sách.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="marketing-root">
+        <section class="section full-height-center" id="marketing-step1">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <a href="https://forms.gle/GzjuSZsGP8SVN7qBA" target="_blank" class="cyber-btn btn-report">🎯 BÁO CÁO CÔNG VIỆC</a>
+                <p style="color: #cbd5e1; margin-top: 10px; font-style: italic; font-size: 0.9rem;">* Hoàn thành task? Click vào đây để nạp minh chứng nhận điểm!</p>
+            </div>
+            <h2 class="gradient-text" style="margin-bottom: 20px;">GIẢI THÍCH VỀ CÔNG VIỆC</h2>
+            <div class="cyber-card" style="cursor: pointer; margin-bottom: 40px;" onclick="openPopup('mkt-detail')">
+                <h3>🌐 Xây dựng Thị trường mới cho OTHK tại trường Đại học</h3>
+                <p style="color: #94a3b8; margin-top: 5px;">Ấn vào Chi tiết để xem hệ thống mục tiêu cốt lõi.</p>
+            </div>
+            <h3 style="margin-bottom: 20px; font-weight: 300;">CHỌN NỀN VĂN MINH CỦA BẠN ĐỂ MỞ KHÓA NHIỆM VỤ:</h3>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button class="cyber-btn" onclick="chooseMarket('AOF')" style="background: linear-gradient(45deg, #eab308, #ca8a04); flex: 1; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height: 1.5;"><span style="font-size: 1.1em;">1. Thị trường AOF</span><span style="font-size: 0.85em; font-weight: 500; text-transform: none; font-family: 'Inter', sans-serif;">Học viện Tài chính</span></button>
+                <button class="cyber-btn" onclick="chooseMarket('HUB')" style="background: linear-gradient(45deg, #00B4D8, #0284c7); flex: 1; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height: 1.5;"><span style="font-size: 1.1em;">2. Thị trường HUB</span><span style="font-size: 0.85em; font-weight: 500; text-transform: none; font-family: 'Inter', sans-serif;">Đại học Ngân hàng Tp.HCM</span></button>
+                <button class="cyber-btn" onclick="chooseMarket('TMU')" style="background: linear-gradient(45deg, #f97316, #ea580c); flex: 1; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height: 1.5;"><span style="font-size: 1.1em;">3. Thị trường TMU</span><span style="font-size: 0.85em; font-weight: 500; text-transform: none; font-family: 'Inter', sans-serif;">Đại học thương mại</span></button>
+            </div>
+        </section>
+
+        <section class="section" id="marketing-step2">
+            <h2>NHIỆM VỤ 1: QUẢN TRỊ BÀI ĐĂNG GROUP FB</h2>
+            
+            <div style="background: rgba(0, 242, 255, 0.1); border-left: 5px solid var(--othk-cyan); padding: 20px; border-radius: 10px; margin-top: 30px;">
+                <p style="color: #cbd5e1; font-size: 1.1rem;">Bạn đã được phân bổ vào chiến trường: <br><span id="market-group-link" style="display:inline-block; margin-top: 10px;"></span></p>
+            </div>
+
+            <div class="kpi-board" style="display: flex; gap: 15px; margin-top: 20px;">
+                <div style="flex: 1; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--othk-cyan); padding: 15px; border-radius: 10px; text-align: center;">
+                    <p style="color: #cbd5e1; font-size: 0.95rem; font-weight: bold;">🎯 KPI Tăng trưởng Nhóm FB</p>
+                    <h3 style="color: var(--othk-cyan); font-size: 2rem; margin-top: 5px;">+<span id="kpi-fb-dynamic">0</span> <span style="font-size: 1rem;">Mem/Tuần</span></h3>
+                </div>
+                <div style="flex: 1; background: rgba(255, 107, 0, 0.1); border: 1px solid var(--othk-orange); padding: 15px; border-radius: 10px; text-align: center;">
+                    <p style="color: #cbd5e1; font-size: 0.95rem; font-weight: bold;">🔥 KPI Chuyển đổi Zalo</p>
+                    <h3 style="color: var(--othk-orange); font-size: 2rem; margin-top: 5px;">+<span id="kpi-zalo-dynamic">0</span> <span style="font-size: 1rem;">Lead/Tuần</span></h3>
+                </div>
+            </div>
+
+            <div class="cyber-card" style="margin-top: 25px; border-left: 4px solid var(--othk-pink);">
+                <h3 style="color: var(--othk-pink); margin-bottom: 15px;">⏱️ QUY TRÌNH & KHUNG GIỜ LÊN BÀI</h3>
+                <ul style="line-height: 1.8; color: #e2e8f0; list-style: none;">
+                    <li>- <b>Định mức (4 Ca/Tuần):</b> Cần soạn đủ <b>4 Tin Tức + 4 Thông Tin + 12 Ẩn Danh</b>.</li>
+                    <li>- <b>Chiến thuật rải bài:</b> Soạn sẵn bài trong ca làm việc, sau đó <b>lên lịch rải đều ra các ngày trong tuần</b> để đảm bảo ngày nào Group cũng có tương tác.</li>
+                    <li>- <b>Khung giờ vàng (Lên bài & Duyệt bài):</b> Duyệt và kích hoạt tương tác vào <span style="color: #00ffaa; font-weight: bold;">10h00 sáng</span> và <span style="color: #00ffaa; font-weight: bold;">20h00 tối</span>.</li>
+                    <li>- <b>KPI Tương tác/Bài:</b> Tối thiểu <b style="color: var(--othk-cyan);">10 Like + 5 Comment</b> <i>(Đã bao gồm 3 comment tự seeding của chính bạn)</i>.</li>
+                </ul>
+            </div>
+
+            <div class="card-grid">
+                <div class="cyber-card" style="cursor: pointer;" onclick="openPopup('task-news')">
+                    <h3 style="color: var(--othk-cyan)">📰 Tuyến Tin tức</h3>
+                    <p style="color: #cbd5e1; margin-top:10px; font-weight: 500;">Chỉ tiêu: 4 Bài / Tuần <br><i>(Click xem bài mẫu)</i></p>
+                </div>
+                <div class="cyber-card" style="cursor: pointer;" onclick="openPopup('task-info')">
+                    <h3 style="color: var(--othk-orange)">🏫 Tuyến Thông tin</h3>
+                    <p style="color: #cbd5e1; margin-top:10px; font-weight: 500;">Chỉ tiêu: 4 Bài / Tuần <br><i>(Click xem bài mẫu)</i></p>
+                </div>
+                <div class="cyber-card" style="cursor: pointer;" onclick="openPopup('task-ghost')">
+                    <h3 style="color: var(--othk-purple)">👻 Tuyến Ẩn danh</h3>
+                    <p style="color: #cbd5e1; margin-top:10px; font-weight: 500;">Chỉ tiêu: 12 Bài / Tuần <br><i>(Kèm tự trả lời bằng 2 nick khác)</i></p>
+                </div>
+            </div>
+
+            <div class="cyber-card" style="margin-top:40px; border: 2px solid var(--othk-orange); background: rgba(255, 107, 0, 0.05);">
+                <h3 style="color: var(--othk-orange);">Lưu ý quan trọng:</h3>
+                <p style="margin-top: 10px; color: #e2e8f0; font-weight: bold;">1. Điều kiện Comment mồi (Seeding):</p>
+                <ul style="margin-top: 10px; margin-bottom: 20px; line-height: 1.8; color: #e2e8f0; list-style-position: inside; list-style-type: none;">
+                    <li>- Luôn quảng bá cho OTHK gián tiếp hoăc trực tiếp (Trừ tuyến bài ẩn danh).</li>
+                    <li>- Gắn Link Group Zalo: <span id="zalo-link-dynamic-mkt" style="color: var(--othk-cyan); font-weight: bold;"></span> <br><span style="color: #fb7185; font-size: 0.9em; font-style: italic; margin-left: 15px;">* Hạn chế gửi trực tiếp link mà hãy để QR Code tham gia nhóm Zalo.</span></li>
+                    <li>- Cung cấp thêm các thông tin bổ ích liên quan về bài đã đăng.</li>
+                </ul>
+                <p style="color: #e2e8f0; font-weight: bold; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 15px;">2. Về bản quyền nội dung:</p>
+                <ul style="margin-top: 10px; line-height: 1.8; color: #e2e8f0; list-style-position: inside; list-style-type: none;"><li>- Luôn phải ghi Cre (Nguồn) vào bài đăng nếu lấy bài của bên khác.</li><li>- Tuyệt đối Không cắt Logo của ảnh nguồn.</li></ul>
+            </div>
+            
+            <div style="margin-top:30px; background: rgba(138,43,226,0.1); border: 1px solid var(--othk-purple); padding: 25px; border-radius: 12px; text-align: center;">
+                <h3 style="color: #e2e8f0; font-weight: 500; margin-bottom: 15px;">Tài nguyên: Hình ảnh nick Đại sứ Thương hiệu OTHK</h3>
+                <a href="https://othkedu.github.io/EliteStudent/" target="_blank" class="cyber-btn" style="background: var(--othk-purple); color: white; display: inline-block; padding: 10px 25px;">Xem chi tiết tại đây</a>
+            </div>
+        </section>
+
+        <section class="section" id="marketing-step3">
+            <h2>NHIỆM VỤ 2: QUẢN TRỊ SỨC KHỎE GROUP</h2>
+            <div class="card-grid">
+                <div class="cyber-card" style="cursor: pointer; border-left: 4px solid var(--othk-pink);" onclick="openPopup('health-duyetbai')"><h3 style="color: var(--othk-pink)">1. Duyệt bài đăng</h3></div>
+                <div class="cyber-card" style="cursor: pointer; border-left: 4px solid #00ffaa;" onclick="openPopup('health-duyetmember')"><h3 style="color: #00ffaa">2. Duyệt Member</h3></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup()">
+    <div class="popup-content" id="popup-body" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+    const marketData = {
+        'AOF': { name: 'Góc tin tức AOF ✅ - Học viện tài chính', url: 'https://www.facebook.com/groups/881878430202721', zalo: 'https://zalo.me/g/yxrmhk908', kpiFb: 30, kpiZalo: 5 },
+        'HUB': { name: 'GÓC TIN TỨC HUB - Trường ĐH Ngân hàng TP.HCM', url: 'https://www.facebook.com/groups/857937995452721', zalo: 'https://zalo.me/g/obstrt289', kpiFb: 120, kpiZalo: 20 },
+        'TMU': { name: 'Góc ôn thi TMU ✅ - Đại học thương mại', url: 'https://www.facebook.com/groups/1511909749312094', zalo: 'https://zalo.me/g/fczpmr427', kpiFb: 50, kpiZalo: 10 }
+    };
+
+    const data = {
+        /* --- CONSULTANT POPUPS --- */
+        'c-step1': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 class="gradient-text" style="margin-bottom: 20px; font-size: 2rem;">🔍 BƯỚC 1: TÌM KIẾM MỤC TIÊU</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-cyan);">
+                <h3 style="color: var(--othk-cyan); margin-bottom: 10px;">🏫 Target School (Trường học mục tiêu)</h3>
+                <ul style="line-height: 1.8; color: #e2e8f0; list-style: none; padding-left: 0;">
+                    <li>- Lọc danh sách các trường THPT có tệp học sinh mức Khá - Giỏi tại Hà Nội.</li>
+                    <li>- <b>Đặc biệt ưu tiên:</b> Khu vực Hai Bà Trưng.</li>
+                    <li>- <b>Tiêu chí lõi:</b> Học sinh quan tâm đến kỳ thi Đánh giá Năng lực (HSA).</li>
+                    <li style="margin-top: 10px; color: #fb7185; font-style: italic;">* Lưu ý quan trọng: Bỏ qua các trường có kỳ thi đặc thù riêng như Sư phạm, Quân đội, Công an...</li>
+                </ul>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid var(--othk-orange);">
+                <h3 style="color: var(--othk-orange); margin-bottom: 10px;">📍 Target Location (Địa điểm tiếp cận)</h3>
+                <p style="line-height: 1.8; color: #e2e8f0;">Thực hiện tìm kiếm các tụ điểm, quán ăn, quán cafe "hot" nhất xung quanh khu vực trường học. Đảm bảo tệp khách hàng tại quán trùng khớp với học sinh của các trường mục tiêu đã tìm kiếm.</p>
+            </div>
+        `,
+        'c-step2': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 class="gradient-text" style="margin-bottom: 20px; font-size: 2rem;">🤝 BƯỚC 2: GỬI LỜI MỜI HỢP TÁC & ĐÀM PHÁN</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-cyan);">
+                <h3 style="color: var(--othk-cyan); margin-bottom: 10px;">💬 1. Phương thức & Thời điểm</h3>
+                <p style="color: #e2e8f0; line-height: 1.6;">Gửi lời mời đàm phán trực tiếp (Offline tới tận quán) hoặc qua Online (Nhắn tin/Gọi điện).<br>
+                <b>⚠️ Lưu ý sống còn:</b> Tuyệt đối chỉ liên hệ vào khung giờ vắng khách (Non-peak hours) để tránh làm phiền chủ quán.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-orange);">
+                <h3 style="color: var(--othk-orange); margin-bottom: 10px;">🔥 2. Trọng tâm đàm phán (Win-Win)</h3>
+                <ul style="line-height: 1.8; color: #e2e8f0; list-style: none; padding-left: 0;">
+                    <li>- <b>Quyền lợi của Quán:</b> OTHK tài trợ mã giảm giá 10K/bill cho khách tham gia (OTHK hoàn tiền mặt 100% cho quán vào cuối mỗi ngày). Yêu cầu học sinh Like/Follow Fanpage của quán (Tăng tương tác cho quán).</li>
+                    <li>- <b>Quy tắc 3 KHÔNG của OTHK:</b> Không chèo kéo - Không ép buộc - Không gây ảnh hưởng tới trải nghiệm ăn uống của khách.</li>
+                </ul>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-pink);">
+                <h3 style="color: var(--othk-pink); margin-bottom: 10px;">✅ 3. Yêu cầu đối với Học sinh</h3>
+                <p style="color: #e2e8f0; line-height: 1.6;">Để nhận Voucher 10k, khách hàng cần: Tham gia đố vui HSA -> Like & Follow Fanpage OTHK + Fanpage Quán -> Join Zalo Group OTHK để nhận tài liệu.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #00ffaa;">
+                <h3 style="color: #00ffaa; margin-bottom: 10px;">📄 4. Bộ tài liệu đàm phán</h3>
+                <p style="color: #e2e8f0; line-height: 1.6; margin-bottom: 15px;">Sử dụng tài liệu chính thức dưới đây để gửi cho chủ quán khi đàm phán Online hoặc show trực tiếp khi làm việc Offline.</p>
+                <a href="https://canva.link/othk" target="_blank" class="cyber-btn" style="background: #00ffaa; color: var(--othk-navy); display: inline-block; padding: 10px 20px; font-size: 0.9rem;">Mở Lời Mời Hợp Tác</a>
+            </div>
+        `,
+        'c-step3': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 class="gradient-text" style="margin-bottom: 20px; font-size: 2rem;">❓ BƯỚC 3: TIẾP CẬN BẰNG ĐỐ VUI</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px; font-style: italic;">* Bắt đầu: "Ơi bạn ơi! Trả lời đố vui nhận ngay voucher 10k giảm bill ăn tại quán chơi không?"<br>* Hỏi lần lượt, khách không trả lời được câu 1 thì hỏi cứu trợ các câu tiếp theo để tối đa tỉ lệ lấy voucher.</p>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-cyan);">
+                <p style="font-weight: bold; margin-bottom: 5px;">1. Chọn một từ mà nghĩa của nó KHÔNG cùng nhóm với các từ còn lại.</p>
+                <p style="color: #e2e8f0; margin-bottom: 5px;">A. Chăm chỉ &nbsp;&nbsp;|&nbsp;&nbsp; B. Cần cù &nbsp;&nbsp;|&nbsp;&nbsp; C. Siêng năng &nbsp;&nbsp;|&nbsp;&nbsp; D. Thông minh</p>
+                <p>👉 Đáp án: <span class="hl-cyan">D. Thông minh</span> <br><span style="font-size:0.9em; color:#94a3b8">(Giải thích: A, B, C đều chỉ thái độ nỗ lực. D chỉ tố chất trí tuệ.)</span></p>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-orange);">
+                <p style="font-weight: bold; margin-bottom: 5px;">2. Chọn một từ mà cấu tạo của nó KHÔNG cùng nhóm với các từ còn lại.</p>
+                <p style="color: #e2e8f0; margin-bottom: 5px;">A. Học hỏi &nbsp;&nbsp;|&nbsp;&nbsp; B. Học tập &nbsp;&nbsp;|&nbsp;&nbsp; C. Học hành &nbsp;&nbsp;|&nbsp;&nbsp; D. Học sinh</p>
+                <p>👉 Đáp án: <span class="hl-orange">D. Học sinh</span> <br><span style="font-size:0.9em; color:#94a3b8">(Giải thích: A, B, C là các động từ chỉ hoạt động. D là danh từ chỉ người.)</span></p>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-pink);">
+                <p style="font-weight: bold; margin-bottom: 5px;">3. Đỉnh núi Fansipan - "Nóc nhà Đông Dương" nằm ở dãy núi nào?</p>
+                <p style="color: #e2e8f0; margin-bottom: 5px;">A. Hoàng Liên Sơn &nbsp;&nbsp;|&nbsp;&nbsp; B. Trường Sơn Bắc &nbsp;&nbsp;|&nbsp;&nbsp; C. Trường Sơn Nam &nbsp;&nbsp;|&nbsp;&nbsp; D. Pu Đen Đinh</p>
+                <p>👉 Đáp án: <span class="hl-pink">A. Hoàng Liên Sơn</span> <br><span style="font-size:0.9em; color:#94a3b8">(Giải thích: Fansipan cao 3143m, thuộc dãy Hoàng Liên Sơn, tỉnh Lào Cai.)</span></p>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-purple);">
+                <p style="font-weight: bold; margin-bottom: 5px;">4. Ngày 2/9/1945, tại Quảng trường Ba Đình, Bác Hồ đã đọc văn kiện nào?</p>
+                <p style="color: #e2e8f0; margin-bottom: 5px;">A. Lời kêu gọi TQKC &nbsp;&nbsp;|&nbsp;&nbsp; B. Tuyên ngôn Độc lập &nbsp;&nbsp;|&nbsp;&nbsp; C. Hiến pháp đầu tiên &nbsp;&nbsp;|&nbsp;&nbsp; D. Bản Di chúc</p>
+                <p>👉 Đáp án: <span style="color: var(--othk-purple); font-weight: bold;">B. Tuyên ngôn Độc lập</span> <br><span style="font-size:0.9em; color:#94a3b8">(Giải thích: Đây là sự kiện khai sinh ra nước Việt Nam Dân chủ Cộng hòa.)</span></p>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #00ffaa;">
+                <p style="font-weight: bold; margin-bottom: 5px;">5. Bài hát "Tiến quân ca" - Quốc ca Việt Nam là sáng tác của ai?</p>
+                <p style="color: #e2e8f0; margin-bottom: 5px;">A. Trịnh Công Sơn &nbsp;&nbsp;|&nbsp;&nbsp; B. Văn Cao &nbsp;&nbsp;|&nbsp;&nbsp; C. Phạm Tuyên &nbsp;&nbsp;|&nbsp;&nbsp; D. Phan Huỳnh Điểu</p>
+                <p>👉 Đáp án: <span style="color: #00ffaa; font-weight: bold;">B. Văn Cao</span> <br><span style="font-size:0.9em; color:#94a3b8">(Giải thích: Sáng tác năm 1944, được Quốc hội khóa I chính thức thông qua.)</span></p>
+            </div>
+        `,
+        'c-step4': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 class="gradient-text" style="margin-bottom: 20px; font-size: 2rem;">📲 BƯỚC 4: ĐIỀU KIỆN NHẬN QUÀ</h2>
+            <ul style="line-height: 1.8; color: #e2e8f0; list-style: none; padding-left: 0;">
+                <li style="margin-bottom: 10px;"><b>1. Follow Fanpage FB OTHK:</b> <a href="https://www.facebook.com/dgnl.othk" target="_blank" class="hl-cyan">Link FB OTHK</a></li>
+                <li style="margin-bottom: 10px;"><b>2. Follow Zalo OA OTHK:</b> <a href="https://zalo.me/4140388090559636379" target="_blank" class="hl-orange">Link Zalo OA</a></li>
+                <li style="margin-bottom: 10px;"><b>3. Follow Fanpage Quán</b> (Nếu chủ quán yêu cầu).</li>
+                <li style="margin-bottom: 10px;"><b>4. Tham gia Box Zalo OTHK (Bắt buộc):</b> Đưa mã QR Code cho khách quét. Khách bắt buộc trả lời 3 câu hỏi duyệt để BD Intern ghi nhận KPI: <br>
+                    <div style="background: #020617; padding: 10px; border-left: 3px solid #00ffaa; margin: 10px 0; font-family: monospace;">
+                        Q1: Họ và Tên + Năm sinh của bạn là gì? (VD: Nguyễn A - 2009)<br>Q2: Số điện thoại của bạn?<br>Q3: Bạn đang học trường THPT nào?
+                    </div>
+                </li>
+                <li style="margin-bottom: 10px;"><b>5. Nhiệm vụ Share:</b> Gửi tin nhắn mời 3 người bạn. <br>💬 <i>Mẫu: "Mình có tham gia chương trình OTHK luyện thi HSA, họ tạo box chat tặng tài liệu xuất phát sớm xịn lắm, b tham khảo vào nhé :> https://zalo.me/g/b98cfkf73q9bzpagqzpl"</i></li>
+            </ul>
+        `,
+        'c-step5': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 class="gradient-text" style="margin-bottom: 20px; font-size: 2rem;">✅ BƯỚC 5: XÁC THỰC & TRAO VOUCHER</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--othk-cyan);">
+                <h3 style="color: var(--othk-cyan);">👁️ 1. Xác Thực Tận Mắt</h3>
+                <p style="margin-top: 10px; color: #cbd5e1;">BD Intern bắt buộc phải tận mắt nhìn thấy màn hình khách hàng đã Share thành công cho 3 người bạn. <i>(Đảm bảo quyền lợi lương KPI của chính bạn!)</i></p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid var(--othk-orange);">
+                <h3 style="color: var(--othk-orange);">🎟️ 2. Trao Voucher Bản Cứng</h3>
+                <p style="margin-top: 10px; color: #cbd5e1;">Tuyệt đối không dùng tin nhắn SMS để giảm giá nhằm tránh việc học sinh gian lận với quán ăn.</p>
+                <p style="margin-top: 10px; color: #cbd5e1;">Sau khi khách hoàn thành nhiệm vụ, Intern trao tận tay <b>1 Voucher giấy cứng trị giá 10K</b>. Khách sử dụng Voucher này đưa cho thu ngân quán ăn lúc thanh toán để trừ thẳng vào Bill.</p>
+            </div>
+        `,
+        'c-step6': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 class="gradient-text" style="margin-bottom: 20px; font-size: 2rem;">📊 BƯỚC 6: BÁO CÁO & CHỐT SỔ TẠI CHỖ</h2>
+            <p style="color: #cbd5e1; margin-bottom: 20px;">Bất cứ khi nào khách vào nhóm Zalo và trả lời đủ 3 câu hỏi duyệt, lập tức Note vào hệ thống: <a href="https://forms.gle/Hj4E1wU9wdTzKviK9" target="_blank" class="hl-cyan">FORM BÁO CÁO OTHK</a>.</p>
+            
+            <div style="background: rgba(255,0,0,0.1); padding: 20px; border-radius: 10px; border: 2px solid red;">
+                <h3 style="color: #fb7185; margin-bottom: 10px;">🚨 QUY TẮC CHỐT SỔ SINH TỬ</h3>
+                <ul style="line-height: 1.8; color: #e2e8f0; list-style: none; padding-left: 0;">
+                    <li>- <b>Data Gốc:</b> Khách trực tiếp làm nhiệm vụ, nhận Voucher giấy 10k.</li>
+                    <li>- <b>Data Mời:</b> Khách được mời thêm vào nhóm (Tính KPI, điền đủ thông tin).</li>
+                    <li style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed red;"><b>Quy tắc 3K (Khớp số - Ký sổ - Không lằng nhằng):</b><br>Trước khi rời khỏi quán, Intern đối chiếu số <b>Voucher Giấy quán đang giữ</b> = <b>Số Data Gốc trên Form</b>. </li>
+                    <li style="margin-top: 10px;">Khớp số => OTHK hoàn tiền mặt trực tiếp cho quán ngay tại chỗ. <br>Sai số do quán => Quán đếm lại. <br>Sai số do Intern quên điền Form => <b>Intern bỏ tiền túi tự đền bù cho quán.</b></li>
+                </ul>
+            </div>
+        `,
+
+        /* --- MARKETING POPUPS --- */
+        'mkt-detail': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 class="gradient-text" style="margin-bottom: 20px; font-size: 2rem; animation: glitch 1s infinite;">XÂY DỰNG THỊ TRƯỜNG MỚI CHO OTHK</h2>
+            <div style="background: rgba(0, 242, 255, 0.05); padding: 25px; border-radius: 12px; border: 1px solid var(--othk-cyan); position: relative; overflow: hidden;">
+                <ul style="line-height: 1.8; font-size: 1.1rem; list-style-type: none; padding-left: 0; position: relative; z-index: 1;">
+                    <li style="margin-bottom: 15px; transition: 0.3s; padding: 15px; border-radius: 8px; background: rgba(0,242,255,0.1); border-left: 4px solid var(--othk-cyan);">🚀 <b>Xây dựng các tuyến nội dung hệ thống Group FB trường Đại học của OTHK, trực tiếp Quản lý & Đảm bảo tình trạng tăng trưởng của nhóm.</b></li>
+                    <li style="transition: 0.3s; padding: 15px; border-radius: 8px; background: rgba(255,107,0,0.1); border-left: 4px solid var(--othk-orange);">📈 <b>Đảm bảo độ tăng trường của nhóm tỉ lệ thuận với tiềm năng khai thác chuyển đổi thành Doanh thu về cho OTHK.</b></li>
+                </ul>
+            </div>
+        `,
+        'task-news': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 style="color: var(--othk-cyan); margin-bottom: 20px;">📰 TIN TỨC MỚI VỀ TRƯỜNG</h2>
+            <div style="display:flex; flex-direction: column; gap: 15px;">
+                <a href="https://www.facebook.com/share/p/1HtvgqE1Mp/" target="_blank" class="sample-link"><div style="background: rgba(0,242,255,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-cyan);">🔗 Thông báo học phí (Mẫu 1)</div></a>
+                <a href="https://www.facebook.com/share/p/1AgAnvEFrZ/" target="_blank" class="sample-link"><div style="background: rgba(0,242,255,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-cyan);">🔗 Thông báo học phí (Mẫu 2)</div></a>
+                <a href="https://www.facebook.com/share/p/1G1P6UN8mF/" target="_blank" class="sample-link"><div style="background: rgba(0,242,255,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-cyan);">🔗 Thông báo Lịch thi</div></a>
+                <a href="https://www.facebook.com/share/p/1aYMY2pLYp/" target="_blank" class="sample-link"><div style="background: rgba(0,242,255,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-cyan);">🔗 Thông báo Đi quân sự</div></a>
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border-left: 3px solid #64748b;">📌 Tuyển sinh & Ngành học mới: <i>Tìm điểm đặc biệt trong đề án năm nay</i></div>
+            </div>
+        `,
+        'task-info': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 style="color: var(--othk-orange); margin-bottom: 20px;">🏫 THÔNG TIN VỀ TRƯỜNG</h2>
+            <div style="display:flex; flex-direction: column; gap: 15px;">
+                <a href="https://www.facebook.com/share/p/14XwDXB8XgQ/" target="_blank" class="sample-link"><div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-orange);">🔗 Mẹo hữu ích</div></a>
+                <a href="https://www.facebook.com/share/p/1GvzR6m4rE/" target="_blank" class="sample-link"><div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-orange);">🔗 Sự kiện, CLB, Khoa đoàn..</div></a>
+                <a href="https://www.facebook.com/share/p/1B4WFiBApe/" target="_blank" class="sample-link"><div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-orange);">🔗 Hình ảnh trường, CSVC</div></a>
+                <a href="https://www.facebook.com/share/p/1EQepodvMd/" target="_blank" class="sample-link"><div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-orange);">🔗 Thuyết trình & Giờ học</div></a>
+                <a href="https://www.facebook.com/share/p/1Dy1AGgGJ4/" target="_blank" class="sample-link"><div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-orange);">🔗 CSVC & Thầy Cô</div></a>
+                <a href="https://www.facebook.com/share/p/1HPi3Rh5zk/" target="_blank" class="sample-link"><div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-orange);">🔗 Review trường, ngành, môn</div></a>
+                <a href="https://www.facebook.com/share/p/1CScc1khnb/" target="_blank" class="sample-link"><div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-orange);">🔗 Tuyến bài giải trí Trend</div></a>
+            </div>
+        `,
+        'task-ghost': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 style="color: var(--othk-purple); margin-bottom: 20px;">👻 BÀI ẨN DANH KÈM TRẢ LỜI</h2>
+            <div style="display:flex; flex-direction: column; gap: 15px;">
+                <a href="https://www.facebook.com/share/p/18FuNJAPLg/" target="_blank" class="sample-link"><div style="background: rgba(138,43,226,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-purple);">🔗 Ẩn danh hỏi tuyển sinh</div></a>
+                <a href="https://www.facebook.com/share/p/1EAorRrDWD/" target="_blank" class="sample-link"><div style="background: rgba(138,43,226,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-purple);">🔗 Ẩn danh xin thông tin sự kiện</div></a>
+                <a href="https://www.facebook.com/share/p/1HZvBqtYuH/" target="_blank" class="sample-link"><div style="background: rgba(138,43,226,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-purple);">🔗 Ẩn danh khen, chê, Drama</div></a>
+                <a href="https://www.facebook.com/share/p/18UzHeJEUa/" target="_blank" class="sample-link"><div style="background: rgba(138,43,226,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--othk-purple);">🔗 Ẩn danh PR OTHK</div></a>
+            </div>
+        `,
+        'health-duyetbai': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 style="color: var(--othk-pink); margin-bottom: 20px;">🛡️ 1. DUYỆT BÀI ĐĂNG</h2>
+            <ul style="line-height: 1.8; color: #e2e8f0; list-style-type: square; padding-left: 20px;">
+                <li>Không duyệt bài CCCD, thông tin cá nhân, tuyển dụng, Buôn bán (trừ của OTHK).</li>
+                <li>Không duyệt bài phản cảm, phản động, chửi bậy, lừa đảo, nói xấu thầy cô.</li>
+                <li>Không duyệt bài đối thủ, Business & Page thương mại.</li>
+                <li style="color: var(--othk-pink); font-weight: bold;">Duyệt bài trước 21h hàng ngày.</li>
+            </ul>
+        `,
+        'health-duyetmember': `
+            <div class="close-btn" onclick="closePopup()">×</div>
+            <h2 style="color: #00ffaa; margin-bottom: 20px;">👥 2. DUYỆT THÀNH VIÊN</h2>
+            <ul style="line-height: 1.8; color: #e2e8f0; list-style-type: square; padding-left: 20px;">
+                <li style="color: #00ffaa; font-weight: bold;">Để chế độ Tự động duyệt</li>
+                <li>Thường xuyên check member bị report, quét member comment Link lừa đảo, kích động.</li>
+            </ul>
+        `
+    };
+
+    function launch(branch) {
+        const rkt = document.getElementById('main-rocket');
+        const fr = document.getElementById('fire');
+        rkt.classList.add('shaking'); fr.style.opacity = '1';
+        setTimeout(() => {
+            rkt.classList.add('launching'); document.getElementById('hero').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('hero').style.display = 'none'; document.getElementById('back-btn').style.display = 'block'; 
+                if(branch === 'consultant') {
+                    ['consultant-s2', 'consultant-s3', 'consultant-s4', 'consultant-s5'].forEach((id, index) => { setTimeout(() => { document.getElementById(id).style.display = 'block'; void document.getElementById(id).offsetWidth; document.getElementById(id).classList.add('active'); }, index * 200 + 100); });
+                } else if(branch === 'marketing') {
+                    const step1 = document.getElementById('marketing-step1'); step1.style.display = 'flex'; void step1.offsetWidth; step1.classList.add('active');
+                }
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }, 800);
+        }, 1200);
+    }
+
+    function chooseMarket(marketKey) {
+        const market = marketData[marketKey];
+        // Điền Tên + Link Market
+        document.getElementById('market-group-link').innerHTML = `<a href="${market.url}" target="_blank" style="color: var(--othk-orange); font-size: 1.4rem; font-weight: 900; text-decoration: underline; display: inline-block; padding: 10px 0; font-family: 'Exo 2', sans-serif;">${market.name}</a>`;
+        document.getElementById('zalo-link-dynamic-mkt').innerHTML = `<a href="${market.zalo}" target="_blank" style="color: var(--othk-cyan); font-weight: bold; text-decoration: none;">${market.zalo}</a>`;
+        
+        // Nhảy số KPI Động
+        document.getElementById('kpi-fb-dynamic').innerText = market.kpiFb;
+        document.getElementById('kpi-zalo-dynamic').innerText = market.kpiZalo;
+
+        // Hiện Section
+        ['marketing-step2', 'marketing-step3'].forEach((id, index) => { setTimeout(() => { const el = document.getElementById(id); el.style.display = 'block'; void el.offsetWidth; el.classList.add('active'); }, index * 200); });
+        setTimeout(() => { document.getElementById('marketing-step2').scrollIntoView({ behavior: 'smooth' }); }, 300);
+    }
+
+    function returnToHero() {
+        document.querySelectorAll('.section').forEach(sec => { sec.classList.remove('active'); setTimeout(() => sec.style.display = 'none', 500); });
+        document.getElementById('back-btn').style.display = 'none';
+        const hero = document.getElementById('hero'); hero.style.display = 'flex'; setTimeout(() => hero.style.opacity = '1', 100);
+        const rkt = document.getElementById('main-rocket'); rkt.classList.remove('launching', 'shaking'); document.getElementById('fire').style.opacity = '0';
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function openPopup(key) { document.getElementById('popup-body').innerHTML = data[key]; document.getElementById('popup-overlay').style.display = 'flex'; }
+    function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; }
+
+    (function initMultiverse() {
+        const bgColors = ['#FF6B00', '#00F2FF', '#8A2BE2', '#FF00FF', '#FFFFFF', '#00ffaa'];
+        const starsContainer = document.getElementById('stars-container'); const agContainer = document.getElementById('antigravity-container');
+        for (let i = 0; i < 150; i++) {
+            let star = document.createElement('div'); star.className = 'star'; let size = Math.random() * 3; star.style.width = size + 'px'; star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh'; star.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)]; star.style.setProperty('--duration', (Math.random() * 3 + 1) + 's'); starsContainer.appendChild(star);
+        }
+        const particles = []; const particleCount = 40;
+        for (let i = 0; i < particleCount; i++) {
+            const p = document.createElement('div'); p.className = 'ag-particle'; const size = Math.random() * 5 + 3; p.style.width = size + 'px'; p.style.height = size + 'px'; p.style.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)]; p.style.boxShadow = `0 0 ${size * 2}px ${p.style.backgroundColor}`;
+            const leftPct = Math.random() * 100; const topPct = Math.random() * 100; p.style.left = leftPct + '%'; p.style.top = topPct + '%'; p.style.opacity = Math.random() * 0.5 + 0.2; agContainer.appendChild(p);
+            particles.push({ el: p, leftPct: leftPct, topPct: topPct, x: 0, y: 0, vx: (Math.random() - 0.5) * 0.8, vy: (Math.random() - 0.5) * 0.8, baseVx: (Math.random() - 0.5) * 0.4, baseVy: (Math.random() - 0.5) * 0.4, angle: Math.random() * Math.PI * 2, orbitRadius: Math.random() * 150 + 50, orbitAngle: Math.random() * Math.PI * 2, orbitSpeed: (Math.random() - 0.5) * 0.03 });
+        }
+        let mouseX = null; let mouseY = null;
+        function animate() {
+            const cWidth = window.innerWidth; const cHeight = window.innerHeight;
+            particles.forEach(p => {
+                const originX = (p.leftPct / 100) * cWidth; const originY = (p.topPct / 100) * cHeight;
+                if (mouseX !== null && mouseY !== null) {
+                    p.orbitAngle += p.orbitSpeed; const targetX = mouseX + Math.cos(p.orbitAngle) * p.orbitRadius; const targetY = mouseY + Math.sin(p.orbitAngle) * p.orbitRadius;
+                    p.vx += (targetX - originX - p.x) * 0.01; p.vy += (targetY - originY - p.y) * 0.01; p.vx *= 0.9; p.vy *= 0.9;
+                } else { p.vx = p.vx * 0.98 + p.baseVx * 0.02; p.vy = p.vy * 0.98 + p.baseVy * 0.02; }
+                p.x += p.vx; p.y += p.vy; p.angle += 0.02; const sway = Math.sin(p.angle) * 1.5; const currentX = originX + p.x; const currentY = originY + p.y;
+                if(currentX < 0 || currentX > cWidth) p.vx *= -1; if(currentY < 0 || currentY > cHeight) p.vy *= -1; p.el.style.transform = `translate3d(${p.x + sway}px, ${p.y}px, 0)`;
+            }); requestAnimationFrame(animate);
+        } animate();
+        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+        window.addEventListener('mouseleave', () => { if(mouseX !== null) { particles.forEach(p => { let dx = (p.leftPct/100*window.innerWidth + p.x) - mouseX; let dy = (p.topPct/100*window.innerHeight + p.y) - mouseY; let dist = Math.sqrt(dx*dx + dy*dy) || 1; p.vx = (dx/dist) * 15; p.vy = (dy/dist) * 15; }); } mouseX = null; mouseY = null; });
+    })();
+</script>
+</body>
+</html>
